@@ -3,7 +3,7 @@ from abc import ABCMeta, abstractmethod
 
 # 抽象クラス
 class AbstractBot(metaclass=ABCMeta):
-    def __init__(self, window_size=10):
+    def __init__(self, window_size):
         self.window_size = window_size
 
         self.open_prices = []
