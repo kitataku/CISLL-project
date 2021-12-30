@@ -1,8 +1,7 @@
-from bots.bollinger_band import BollingerBand
-from bots.adx import ADX
+from getbot import get_bot
 
 if __name__ == "__main__":
-    #bot = BollingerBand(pair="bat_jpy", test_start="20211224", start_jpy=10000)
-    bot = ADX(pair="bat_jpy", test_start="20211224", start_jpy=10000)
+    params = {"pair": "bat_jpy", "test_start": "20211224", "start_jpy": 10000}
+    bot = get_bot(bot_name="ADX", params=params)
     bot.test_run()  # テスト実行
     bot.print_asset()  # 最終結果を出力
