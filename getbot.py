@@ -1,5 +1,6 @@
 from bots.bollinger_band import BollingerBand
 from bots.adx import ADX
+from bots.a2c import A2C
 
 
 def get_bot(bot_name, params):
@@ -16,6 +17,8 @@ def get_bot(bot_name, params):
         bot = BollingerBand
     elif bot_name == "ADX":
         bot = ADX
+    elif bot_name == "A2C":
+        bot = A2C
         
     # パラメータの設定
     bot = bot(**params)
