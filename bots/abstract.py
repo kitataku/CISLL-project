@@ -36,11 +36,28 @@ class AbstractBot(metaclass=ABCMeta):
         # 取引対象の仮想通貨の名前をセット
         self.set_crypto_name(self.PAIR)
 
+        self.target_day = None
+        self.last_test_day = False
+
+        self.START_JPY = start_jpy
+        self.TEST_START = test_start
+
+    def reset_params(self):
+        """
+        パラメータのリセット
+        """
+        self.open_prices = []
+        self.high_prices = []
+        self.close_prices = []
+        self.low_prices = []
+
+        self.data_id = 0
+
         if self.TEST:
-            self.target_day = datetime.datetime.strptime(test_start, "%Y%m%d")
+            self.target_day = datetime.datetime.strptime(self.TEST_START, "%Y%m%d")
             self.prepare_price_list()
             self.last_test_day = False
-            self.jpy = start_jpy
+            self.jpy = self.START_JPY
 
     def update_info(self, open_price, high, low, close_price):
         """
@@ -124,7 +141,6 @@ class AbstractBot(metaclass=ABCMeta):
         if self.data_id == len(self.cache):
             if self.last_test_day:
                 # テスト終了
-                print("Test Mode finish!")
                 return True
             else:
                 # 次の日のロウソク足を取得
@@ -207,18 +223,27 @@ class AbstractBot(metaclass=ABCMeta):
         self.crypto_name = pair.split("_")[0].upper()
 
     def print_asset(self):
+        asset_jpy = self.jpy + self.crypto * self.close_prices[-1]
         print("="*10 + "資産状況" + "="*10)
         print("日本円\t:{:.3f}".format(self.jpy), "円")
         print("仮想通貨\t:{}".format(self.crypto), self.crypto_name)
+        print("想定資産\t:{:.3f}".format(asset_jpy), "円")
         print("="*26)
 
-    def test_run(self):
+    def test_run(self, episode=1):
         """
         テストモード開始
         """
-        done = False
-        while not done:
-            done = self.step()
-            # テストモードが無効の場合
-            if done is None:
-                break
+        for i in range(episode):
+            done = False
+            self.reset_params()  # パラメータのリセット
+            while not done:
+                done = self.step()
+                # テストモードが無効の場合
+                if done is None:
+                    break
+
+            if episode != 1:
+                print("Episode {}".format(i))
+
+            self.print_asset()  # 最終結果を出力

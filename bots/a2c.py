@@ -22,6 +22,8 @@ class A2C(AbstractBot):
         self.model = None
         self.optim = None
 
+        self.loss_log = []
+
     def calc_values(self):
         """
         戦略に応じた値を計算する
