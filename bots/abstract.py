@@ -42,6 +42,9 @@ class AbstractBot(metaclass=ABCMeta):
         self.START_JPY = start_jpy
         self.TEST_START = test_start
 
+        self.buy_count = 0  # 通貨を売却した回数
+        self.sell_count = 0  # 通貨を購入した回数
+
     def reset_params(self):
         """
         パラメータのリセット
@@ -53,11 +56,15 @@ class AbstractBot(metaclass=ABCMeta):
 
         self.data_id = 0
 
+        self.buy_count = 0
+        self.sell_count = 0
+
         if self.TEST:
             self.target_day = datetime.datetime.strptime(self.TEST_START, "%Y%m%d")
             self.prepare_price_list()
             self.last_test_day = False
             self.jpy = self.START_JPY
+            self.crypto = 0.0
 
     def update_info(self, open_price, high, low, close_price):
         """
@@ -207,6 +214,8 @@ class AbstractBot(metaclass=ABCMeta):
                 self.jpy -= transaction_price
                 self.crypto += amount
 
+                self.buy_count += 1  # 通貨を購入した回数を更新
+
         elif buy_sell == "sell":
             # 取引価格
             transaction_price = amount*latest_price*(1-self.FEE)
@@ -214,6 +223,8 @@ class AbstractBot(metaclass=ABCMeta):
                 # 資産更新
                 self.jpy += transaction_price
                 self.crypto -= amount
+
+                self.sell_count += 1  # 通貨を売却した回数を更新
 
     def set_crypto_name(self, pair):
         """
@@ -225,9 +236,11 @@ class AbstractBot(metaclass=ABCMeta):
     def print_asset(self):
         asset_jpy = self.jpy + self.crypto * self.close_prices[-1]
         print("="*10 + "資産状況" + "="*10)
-        print("日本円\t:{:.3f}".format(self.jpy), "円")
-        print("仮想通貨\t:{}".format(self.crypto), self.crypto_name)
-        print("想定資産\t:{:.3f}".format(asset_jpy), "円")
+        print("日本円\t: {:.3f}".format(self.jpy), "円")
+        print("仮想通貨\t: {}".format(self.crypto), self.crypto_name)
+        print("想定資産\t: {:.3f}".format(asset_jpy), "円")
+        print("売却回数\t: {}".format(self.buy_count), "回")
+        print("購入回数\t: {}".format(self.sell_count), "回")
         print("="*26)
 
     def test_run(self, episode=1):
@@ -244,6 +257,6 @@ class AbstractBot(metaclass=ABCMeta):
                     break
 
             if episode != 1:
-                print("Episode {}".format(i))
+                print("Episode {}".format(i+1))
 
             self.print_asset()  # 最終結果を出力
