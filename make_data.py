@@ -76,4 +76,3 @@ def make_data(pair, start_day, end_day=None, return_window=12):
 
         # 取得対象日を更新
         target_day += datetime.timedelta(days=1)
-
