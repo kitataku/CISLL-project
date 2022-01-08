@@ -62,7 +62,7 @@ def make_data(pair, start_day, end_day=None, return_window=12):
         df_output["VWAP"] = df_output["multiple"] / df_output["vol_sum"]
 
         # log return
-        # log(P(t+window)/P(t)) ~ P(t+window) - P(t)
+        # log(P(t)/P(t-window)) ~ P(t) / P(t-window) - 1
         df_output["log_return"] = (df_output["close"] / df_output["close"].shift(periods=return_window)) - 1
 
         # 出力用DataFrameから前日のデータを削除
