@@ -33,8 +33,10 @@ for asset in assets:
             executed_amount = ao["executed_amount"]  # 約定済数量
             order_price = ao["price"]  # 注文価格
 
+            print("-" * 15)
             print("||No.", i + 1)
             print("||注文ID:\t\t", order_id)
             print("||注文数量:\t\t", start_amount)
             print("||約定済数量:\t", executed_amount)
             print("||注文価格:\t\t", order_price)
+        print("-" * 15)
