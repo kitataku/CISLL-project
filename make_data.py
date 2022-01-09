@@ -17,7 +17,18 @@ def make_data(pair, start_day, end_day=None, return_window=12):
     """
     str_pattern = "%Y%m%d"
     col_names = ["open", "high", "low", "close", "vol", "timestamp"]
-    output_col_names = ["open", "high", "low", "close", "vol", "timestamp", "VWAP", "log_return"]
+    output_col_names = [
+        "open",
+        "high",
+        "low",
+        "close",
+        "vol",
+        "timestamp",
+        "VWAP",
+        "log_return",
+        "upper_shadow",
+        "lower_shadow",
+    ]
 
     # 実行日の時刻を00:00:00に調整
     today_zero = datetime.datetime.today().strftime(str_pattern)
@@ -68,6 +79,10 @@ def make_data(pair, start_day, end_day=None, return_window=12):
         # 出力用DataFrameから前日のデータを削除
         df_output = df_output[df_output["timestamp"] >= target_day]
 
+        # ヒゲを取得
+        df_output["upper_shadow"] = upper_shadow(df_output)
+        df_output["lower_shadow"] = lower_shadow(df_output)
+
         # 必要な列のみ抽出
         df_output = df_output[output_col_names]
 
@@ -76,3 +91,25 @@ def make_data(pair, start_day, end_day=None, return_window=12):
 
         # 取得対象日を更新
         target_day += datetime.timedelta(days=1)
+
+def upper_shadow(df):
+    """
+    上ヒゲを取得
+    :param df: OHLC
+    :return: 上ヒゲ
+    """
+    return df["high"] - np.maximum(df["close"], df["open"])
+
+
+def lower_shadow(df):
+    """
+    下ヒゲを取得
+    :param df: OHLC
+    :return: 下ヒゲ
+    """
+    return np.minimum(df["close"], df["open"]) - df["low"]
+
+
+if __name__ == "__main__":
+    # 動作テスト用
+    make_data("bat_jpy", "20220105", "20220106")
