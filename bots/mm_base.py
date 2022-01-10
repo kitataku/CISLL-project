@@ -78,6 +78,6 @@ class MMBase(AbstractBot):
             print("買い注文:", bid_price)
 
 
-bot = MMBase("bat_jpy")
-items_loc = bot.calc_values()
-bot.get_action(items_loc)
+bot = MMBase("bat_jpy")  # 動作確認用
+items_loc = bot.calc_values()  # 動作確認用
+bot.get_action(items_loc)  # 動作確認用
